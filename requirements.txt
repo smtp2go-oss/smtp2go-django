@@ -1,6 +1,8 @@
-Django==1.10.5
-pytest-cov==2.4.0
-python-coveralls==2.9.0
-requests==2.13.0
-responses==0.5.1
-smtp2go==1.0.0
+coverage
+Django
+pytest
+pytest-cov
+python-coveralls
+requests
+responses
+smtp2go
