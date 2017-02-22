@@ -1,3 +1,4 @@
+from threading import RLock
 from smtplib import SMTPException
 from ssl import SSLError
 
@@ -44,14 +45,16 @@ class SMTP2GoEmailBackend(BaseEmailBackend):
         """
         Wraps SMTP2Go Python API library
         """
-        sent_count = 0
-        for message in email_messages:
-            try:
-                payload = self._get_payload(message)
-                s = SMTP2Go()
-                s.send(**payload)
-                sent_count += 1
-            except (SMTPException, SSLError, SMTP2GoBaseException):
-                if not self.fail_silently:
-                    raise
+        lock = RLock()
+        with lock:
+            sent_count = 0
+            for message in email_messages:
+                try:
+                    payload = self._get_payload(message)
+                    s = SMTP2Go()
+                    s.send(**payload)
+                    sent_count += 1
+                except (SMTPException, SSLError, SMTP2GoBaseException):
+                    if not self.fail_silently:
+                        raise
         return sent_count
