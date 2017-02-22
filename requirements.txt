@@ -1,0 +1,4 @@
+Django==1.10.5
+requests==2.13.0
+responses==0.5.1
+smtp2go==1.0.0
