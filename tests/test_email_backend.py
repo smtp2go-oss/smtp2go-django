@@ -1,6 +1,6 @@
-from django.core.mail import EmailMessage
-import pytest
 import responses
+from django.core.mail import EmailMessage
+from smtp2go.settings import API_ROOT, ENDPOINT_SEND
 
 from smtp2go_django.email_backend import SMTP2GoEmailBackend
 
@@ -12,11 +12,12 @@ TEST_MESSAGES = [EmailMessage(
     to=['testers@test.com']
 )]
 
+
 def _mock_endpoint():
     # Mock out API Endpoint:
     http_return_code = 200
     responses.add(responses.POST, API_ROOT + ENDPOINT_SEND,
-                  json=SUCCESSFUL_RESPONSE, status=http_return_code,
+                  json={'success': True}, status=http_return_code,
                   content_type='application/json')
 
 

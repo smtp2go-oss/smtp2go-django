@@ -9,6 +9,7 @@ from smtp2go.exceptions import SMTP2GoBaseException
 
 from inspect import getargspec
 
+
 class SMTP2GoAPIContentException(SMTP2GoBaseException):
     pass
 
