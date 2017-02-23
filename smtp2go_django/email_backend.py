@@ -7,8 +7,6 @@ from django.core.mail.backends.base import BaseEmailBackend
 from smtp2go.core import SMTP2Go
 from smtp2go.exceptions import SMTP2GoBaseException
 
-from inspect import getargspec
-
 
 class SMTP2GoAPIContentException(SMTP2GoBaseException):
     pass
@@ -24,6 +22,7 @@ class SMTP2GoEmailBackend(BaseEmailBackend):
         self.email_message_parameters = ['from_email', 'to', 'subject', 'body']
         # smtp2go-python parameters:
         self.required_params = ['sender', 'recipients', 'subject', 'message']
+        self.smtp2go = SMTP2Go()
         self.lock = RLock()
 
     def _get_payload(self, email_message):
@@ -50,18 +49,19 @@ class SMTP2GoEmailBackend(BaseEmailBackend):
                     self.required_params))
         return payload
 
+    def _smtp2go_send(self, payload):
+        self.smtp2go.send(**payload)
+
     def send_messages(self, email_messages):
         """
         Wraps SMTP2Go Python API library
         """
-        lock = RLock()
-        with lock:
+        with self.lock:
             sent_count = 0
             for message in email_messages:
                 try:
                     payload = self._get_payload(message)
-                    s = SMTP2Go()
-                    s.send(**payload)
+                    self._smtp2go_send(payload)
                     sent_count += 1
                 except (SMTPException, SSLError, SMTP2GoBaseException):
                     if not self.fail_silently:
