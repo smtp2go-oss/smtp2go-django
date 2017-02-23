@@ -49,8 +49,8 @@ Then you can hook into Django's inbuilt email sending:
     send_mail(
         subject='Trying out smtp2go',
         message='Test Message',
-        from_email='goofy@clubhouse.com',
-        recipient_list=['mickey@clubhouse.com']
+        from_email='dave@example.com',
+        recipient_list=['matt@example.com']
     )
 
 Full API documentation can be found [here](https://apidoc.smtp2go.com/documentation/#/README) and for your convenience, here are [Django's email docs](https://docs.djangoproject.com/en/1.10/topics/email/)

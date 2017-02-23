@@ -33,8 +33,8 @@ class SMTP2GoEmailBackend(BaseEmailBackend):
         self.fail_silently
 
         Returns dict contraining SMTP2Go parameters:
-        {'sender': u'goofy@clubhouse.com',
-         'recipients': ['mickey@clubhouse.com'],
+        {'sender': u'dave@example.com',
+         'recipients': ['matt@example.com'],
          'subject': u'Trying out SMTP2Go',
          'message': u'Test Message'}
         """
