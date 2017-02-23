@@ -1,28 +1,47 @@
+import pytest
 import responses
 from django.core.mail import EmailMessage
 from smtp2go.settings import API_ROOT, ENDPOINT_SEND
 
-from smtp2go_django.email_backend import SMTP2GoEmailBackend
+from smtp2go_django.email_backend import SMTP2GoEmailBackend, SMTP2GoAPIContentException
 
 TEST_API_KEY = 'testapikey'
-TEST_MESSAGES = [EmailMessage(
-    subject='Test Message',
-    body='Test!',
-    from_email='test@test.com',
-    to=['testers@test.com']
-)]
 
 
-def _mock_endpoint():
-    # Mock out API Endpoint:
-    http_return_code = 200
-    responses.add(responses.POST, API_ROOT + ENDPOINT_SEND,
-                  json={'success': True}, status=http_return_code,
-                  content_type='application/json')
+@pytest.fixture
+def TEST_MESSAGES():
+    return [EmailMessage(
+        subject='Test Message',
+        body='Test!',
+        from_email='test@test.com',
+        to=['testers@test.com']
+    )]
 
 
-def test_send(monkeypatch):
+def test_missing_to_field(monkeypatch, TEST_MESSAGES):
     monkeypatch.setenv('SMTP2GO_API_KEY', TEST_API_KEY)
-    s = SMTP2GoEmailBackend()
-    sent_count = s.send_messages(TEST_MESSAGES)
-    assert sent_count == len(TEST_MESSAGES)
+    email_backend = SMTP2GoEmailBackend()
+    setattr(TEST_MESSAGES[0], 'to', None)
+    with pytest.raises(SMTP2GoAPIContentException):
+        email_backend.send_messages(TEST_MESSAGES)
+
+def test_missing_from_email_field(monkeypatch, TEST_MESSAGES):
+    monkeypatch.setenv('SMTP2GO_API_KEY', TEST_API_KEY)
+    email_backend = SMTP2GoEmailBackend()
+    setattr(TEST_MESSAGES[0], 'from_email', None)
+    with pytest.raises(SMTP2GoAPIContentException):
+        email_backend.send_messages(TEST_MESSAGES)
+
+def test_missing_subject_field(monkeypatch, TEST_MESSAGES):
+    monkeypatch.setenv('SMTP2GO_API_KEY', TEST_API_KEY)
+    email_backend = SMTP2GoEmailBackend()
+    setattr(TEST_MESSAGES[0], 'subject', None)
+    with pytest.raises(SMTP2GoAPIContentException):
+        email_backend.send_messages(TEST_MESSAGES)
+
+def test_missing_body_field(monkeypatch, TEST_MESSAGES):
+    monkeypatch.setenv('SMTP2GO_API_KEY', TEST_API_KEY)
+    email_backend = SMTP2GoEmailBackend()
+    setattr(TEST_MESSAGES[0], 'body', None)
+    with pytest.raises(SMTP2GoAPIContentException):
+        email_backend.send_messages(TEST_MESSAGES)

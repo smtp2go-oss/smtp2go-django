@@ -18,6 +18,14 @@ class SMTP2GoEmailBackend(BaseEmailBackend):
     """
     SMTP2Go wrapper for Django's Email Backend
     """
+    def __init__(self, fail_silently=False, **kwargs):
+        super(SMTP2GoEmailBackend, self).__init__(fail_silently=fail_silently)
+        # Django's EmailMessage parameters:
+        self.email_message_parameters = ['from_email', 'to', 'subject', 'body']
+        # smtp2go-python parameters:
+        self.required_params = ['sender', 'recipients', 'subject', 'message']
+        self.lock = RLock()
+
     def _get_payload(self, email_message):
         """
         Extracts parameters from Django's EmailMessage object.
@@ -31,15 +39,15 @@ class SMTP2GoEmailBackend(BaseEmailBackend):
          'subject': u'Trying out SMTP2Go',
          'message': u'Test Message'}
         """
-        email_message_parameters = ['from_email', 'to', 'subject', 'body']
-        required_params = getargspec(SMTP2Go().send).args[1:]
-        payload = dict(zip(required_params, [
-            getattr(email_message, p) for p in email_message_parameters]))
+        # Get content from EmailMessage:
+        email_content = [getattr(
+            email_message, p) for p in self.email_message_parameters]
+        payload = dict(zip(self.required_params, email_content))
         # Raise exception if any parameters are missing:
         if not all(payload.values()):
             raise SMTP2GoAPIContentException(
                 'The following parameters are required: {0}'.format(
-                    required_params))
+                    self.required_params))
         return payload
 
     def send_messages(self, email_messages):
