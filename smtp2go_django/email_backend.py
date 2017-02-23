@@ -14,7 +14,7 @@ class SMTP2GoAPIContentException(SMTP2GoBaseException):
 
 class SMTP2GoEmailBackend(BaseEmailBackend):
     """
-    SMTP2Go wrapper for Django's Email Backend
+    smtp2go wrapper for Django's Email Backend
     """
     def __init__(self, fail_silently=False, **kwargs):
         super(SMTP2GoEmailBackend, self).__init__(fail_silently=fail_silently)
@@ -32,10 +32,10 @@ class SMTP2GoEmailBackend(BaseEmailBackend):
         Raised exceptions may be supressed by calling function - contingent on
         self.fail_silently
 
-        Returns dict contraining SMTP2Go parameters:
+        Returns dict containing smtp2go parameters:
         {'sender': u'dave@example.com',
          'recipients': ['matt@example.com'],
-         'subject': u'Trying out SMTP2Go',
+         'subject': u'Trying out smtp2go',
          'message': u'Test Message'}
         """
         # Get content from EmailMessage:
@@ -54,7 +54,7 @@ class SMTP2GoEmailBackend(BaseEmailBackend):
 
     def send_messages(self, email_messages):
         """
-        Wraps SMTP2Go Python API library
+        Wraps smtp2go Python API library
         """
         with self.lock:
             sent_count = 0

@@ -10,7 +10,7 @@
 
 Python/Django wrapper for interfacing with the [smtp2go](https://www.smtp2go.com) API
 
-You may not need this library at all! If you want to hit the SMTP server directly, simply set the following in your settings.py:
+You may not need this library at all! If you want to use the SMTP server directly, simply set the following in your settings.py:
 
     
     EMAIL_HOST = 'smtp.smtp2go.com'
