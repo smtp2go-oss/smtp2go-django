@@ -1,7 +1,7 @@
 from setuptools import setup
 
 setup(name='smtp2go-django',
-      version='0.0.1',
+      version='1.0.0',
       description='Library for interacting with the SMTP2Go API via Django.',
       url='https://github.com/smtp2go-oss/smtp2go-django',
       author='SMTP2Go',
@@ -12,10 +12,12 @@ setup(name='smtp2go-django',
           'smtp2go'
       ],
       classifiers=[
-          "Development Status :: 3 - Alpha",
+          "Development Status :: 5 - Production/Stable",
           "Intended Audience :: Developers",
           "License :: OSI Approved :: MIT License",
-          "Programming Language :: Python",
-          "Topic :: Software Development :: Libraries"
+          "Programming Language :: Python :: 2.7",
+          "Programming Language :: Python :: 3",
+          "Topic :: Communications :: Email",
+          "Topic :: Software Development :: Libraries :: Python Modules",
       ],
       zip_safe=False)
