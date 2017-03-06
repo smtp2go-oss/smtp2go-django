@@ -5,4 +5,4 @@ Guardfile
 .pyirc
 build/
 dist/
-smtp2go.egg-info/
+smtp2go_django.egg-info/
