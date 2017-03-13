@@ -13,10 +13,10 @@ Python/Django wrapper for interfacing with the [smtp2go](https://www.smtp2go.com
 You may not need this library at all! If you want to use the SMTP server directly, simply set the following in your settings.py:
 
     
-    EMAIL_HOST = 'smtp.smtp2go.com'
-    EMAIL_HOST_USER = '<your registered email>'
-    EMAIL_HOST_PASSWORD = '<Your password>'
-    EMAIL_PORT = 587
+    EMAIL_HOST = 'mail.smtp2go.com'
+    EMAIL_HOST_USER = '<your smtp2go SMTP username>'
+    EMAIL_HOST_PASSWORD = '<Your SMTP password>'
+    EMAIL_PORT = 587  # alternatively: 2525 or 80
     EMAIL_USE_TLS = True
 
     # Django defaults to this backend, but if you'd like to be explicit:
