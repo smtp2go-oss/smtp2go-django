@@ -44,7 +44,7 @@ class Smtp2goEmailBackend(BaseEmailBackend):
         html = self._get_html(email_message)
 
         # Raise exception if any parameters are missing:
-        if not all(payload.values()):
+        if not all(payload.values()) or not any([text, html]):
             raise Smtp2goAPIContentException(
                 'The following parameters are required: {0} '
                 'and one or both of text or html'.format(
