@@ -1,6 +1,6 @@
 [![Build Status](https://travis-ci.org/smtp2go-oss/smtp2go-django.svg?branch=master)](https://travis-ci.org/smtp2go-oss/smtp2go-django)
 [![Coverage Status](https://coveralls.io/repos/github/smtp2go-oss/smtp2go-django/badge.svg?branch=master)](https://coveralls.io/github/smtp2go-oss/smtp2go-django?branch=master)
-[![PyPI version](https://badge.fury.io/py/smtp2go.svg)](https://badge.fury.io/py/smtp2go)
+[![PyPI version](https://badge.fury.io/py/smtp2go-django.svg)](https://badge.fury.io/py/smtp2go-django)
 [![Dependency Status](https://gemnasium.com/badges/github.com/smtp2go-oss/smtp2go-django.svg)](https://gemnasium.com/github.com/smtp2go-oss/smtp2go-django)
 [![Code Climate](https://codeclimate.com/github/smtp2go-oss/smtp2go-django/badges/gpa.svg)](https://codeclimate.com/github/smtp2go-oss/smtp2go-django)
 [![Issue Count](https://codeclimate.com/github/smtp2go-oss/smtp2go-django/badges/issue_count.svg)](https://codeclimate.com/github/smtp2go-oss/smtp2go-django)
@@ -15,7 +15,7 @@ You may not need this library at all! If you want to use the SMTP server directl
     
     EMAIL_HOST = 'mail.smtp2go.com'
     EMAIL_HOST_USER = '<your smtp2go SMTP username>'
-    EMAIL_HOST_PASSWORD = '<Your SMTP password>'
+    EMAIL_HOST_PASSWORD = '<your SMTP password>'
     EMAIL_PORT = 587  # alternatively: 2525 or 80
     EMAIL_USE_TLS = True
 
@@ -40,9 +40,9 @@ Sign up for a free account [here](https://www.smtp2go.com/pricing) and get an AP
 
   In settings.py, set:
 
-    EMAIL_BACKEND = 'mailer.email_backend.SMTP2GoEmailBackend'
-Then you can hook into Django's inbuilt email sending:
+    EMAIL_BACKEND = 'smtp2go_django.email_backend.Smtp2goEmailBackend'
 
+Then you can hook into Django's inbuilt email sending:
 
     from django.core.mail import send_mail
 
