@@ -9,6 +9,9 @@ from smtp2go_django.email_backend import (
     Smtp2goAPIContentException,
 )
 
+# Parameters accepted by smtp2go client:
+CLIENT_PARAMETERS = ['sender', 'recipients', 'subject', 'text', 'html']
+
 
 class TestEmailBackend:
 
@@ -73,3 +76,18 @@ class TestEmailBackend:
             return raiser
         setattr(email_backend, '_smtp2go_send', exception_raiser(exception))
         email_backend.send_messages([test_message])
+
+    # @pytest.mark.parametrize('argument', CLIENT_PARAMETERS)
+    # def test_parameters_passed_to_smtp2go_client(self, argument):
+    #     pass
+
+
+class TestHelperFunctions:
+    @pytest.mark.parametrize('argument', CLIENT_PARAMETERS)
+    def test__get_payload_extracts_correct_arguments(
+            self, argument, email_backend, test_message):
+        payload = email_backend._get_payload(test_message)
+        assert argument in payload.keys()
+
+    # def test__get_html(self):
+    #     pass
