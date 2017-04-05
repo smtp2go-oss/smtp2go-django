@@ -11,6 +11,7 @@ from smtp2go_django.email_backend import (
 
 # Parameters accepted by smtp2go client:
 CLIENT_PARAMETERS = ['sender', 'recipients', 'subject', 'text', 'html']
+DJANGO_MESSAGE_PARAMETERS = ['from_email', 'to', 'subject', 'body']
 
 
 class TestEmailBackend:
@@ -77,9 +78,20 @@ class TestEmailBackend:
         setattr(email_backend, '_smtp2go_send', exception_raiser(exception))
         email_backend.send_messages([test_message])
 
-    # @pytest.mark.parametrize('argument', CLIENT_PARAMETERS)
-    # def test_parameters_passed_to_smtp2go_client(self, argument):
-    #     pass
+    @pytest.mark.parametrize('argument', CLIENT_PARAMETERS)
+    def test_parameters_passed_to_smtp2go_client(self, argument, test_html_message):
+        email_backend = Smtp2goEmailBackend()
+        payload = email_backend._get_payload(test_html_message)
+        initial_value = payload.get(argument)
+
+        class MockSmtp2goClient:
+            def send(self, *args, **kwargs):
+                # Check values are passed correctly:
+                assert argument in kwargs.keys()
+                assert kwargs.get(argument) == initial_value
+
+        setattr(email_backend, 'smtp2go', MockSmtp2goClient())
+        email_backend.send_messages([test_html_message])
 
 
 class TestHelperFunctions:
@@ -89,5 +101,5 @@ class TestHelperFunctions:
         payload = email_backend._get_payload(test_message)
         assert argument in payload.keys()
 
-    # def test__get_html(self):
-    #     pass
+    def test__get_html(self):
+        pass

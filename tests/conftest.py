@@ -1,6 +1,6 @@
 import pytest
 
-from django.core.mail import EmailMessage
+from django.core.mail import EmailMessage, EmailMultiAlternatives
 from smtp2go_django.email_backend import Smtp2goEmailBackend
 
 
@@ -18,6 +18,7 @@ def email_backend(set_env):
 
 @pytest.fixture(autouse=True)
 def disallow_external_requests(monkeypatch, email_backend):
+    # assert False, 'BUTTFERZZZ!'
     monkeypatch.setattr(email_backend, '_smtp2go_send', lambda x: None)
 
 
@@ -29,3 +30,16 @@ def test_message(autouse=True):
         from_email='dave@example.com',
         to=['matt@example.com']
     )
+
+@pytest.fixture()
+def test_html_message(autouse=True):
+    payload = {
+        'to': ['matt@example.com'],
+        'from_email': 'dave@example.com',
+        'subject': 'Test Message',
+        'body': 'Test Message Text'
+    }
+    html_content = '<html><body><h1>Test Message HTML</h1></body></html>'
+    message = EmailMultiAlternatives(**payload)
+    message.attach_alternative(html_content, "text/html")
+    return message
