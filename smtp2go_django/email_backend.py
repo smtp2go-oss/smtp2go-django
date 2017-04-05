@@ -21,6 +21,22 @@ class Smtp2goEmailBackend(BaseEmailBackend):
         self.smtp2go = Smtp2goClient()
         self.lock = RLock()
 
+    def send_messages(self, email_messages):
+        """
+        Wraps smtp2go Python API library
+        """
+        with self.lock:
+            sent_count = 0
+            for message in email_messages:
+                try:
+                    payload = self._get_payload(message)
+                    self._smtp2go_send(payload)
+                    sent_count += 1
+                except (SMTPException, SSLError, Smtp2goBaseException):
+                    if not self.fail_silently:
+                        raise
+        return sent_count
+
     def _get_payload(self, email_message):
         """
         Extracts parameters from Django's EmailMessage object.
@@ -32,7 +48,8 @@ class Smtp2goEmailBackend(BaseEmailBackend):
         {'sender': u'dave@example.com',
          'recipients': ['matt@example.com'],
          'subject': u'Trying out smtp2go',
-         'message': u'Test Message'}
+         'text': u'Test Message'}
+         'html': u'<html><body><h1>Test HTML Message</h1></body></html>'}
         """
         # Get content from EmailMessage:
         payload = {
@@ -64,19 +81,3 @@ class Smtp2goEmailBackend(BaseEmailBackend):
 
     def _smtp2go_send(self, payload):
         self.smtp2go.send(**payload)
-
-    def send_messages(self, email_messages):
-        """
-        Wraps smtp2go Python API library
-        """
-        with self.lock:
-            sent_count = 0
-            for message in email_messages:
-                try:
-                    payload = self._get_payload(message)
-                    self._smtp2go_send(payload)
-                    sent_count += 1
-                except (SMTPException, SSLError, Smtp2goBaseException):
-                    if not self.fail_silently:
-                        raise
-        return sent_count
