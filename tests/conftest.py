@@ -31,6 +31,7 @@ def test_message(autouse=True):
         to=['matt@example.com']
     )
 
+
 @pytest.fixture()
 def test_multipart_message(autouse=True):
     payload = {

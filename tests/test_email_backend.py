@@ -70,6 +70,7 @@ class TestEmailBackend:
     def test_core_exceptions_supressed(
             self, monkeypatch, test_message, exception):
         email_backend = Smtp2goEmailBackend(fail_silently=True)
+
         def exception_raiser(exception):
             def raiser(*args, **kwargs):
                 raise exception
@@ -92,13 +93,14 @@ class TestHelperFunctions:
         payload = email_backend._get_payload(test_multipart_message)
         assert argument in payload.keys()
 
-    def test_get_html_returns_html(self, email_backend, test_multipart_message):
+    def test_get_html_returns_html(
+            self, email_backend, test_multipart_message):
         expected, __ = test_multipart_message.alternatives[0]
         assert expected == email_backend._get_html(test_multipart_message)
 
     def test_get_html_returns_none_when_passed_text_email(
             self, email_backend, test_message):
-        assert email_backend._get_html(test_message) == None
+        assert email_backend._get_html(test_message) is None
 
     @pytest.mark.parametrize('argument', CLIENT_PARAMETERS)
     def test_parameters_passed_to_smtp2go_client_from_email_message(
