@@ -71,7 +71,8 @@ class Smtp2goEmailBackend(BaseEmailBackend):
         return payload
 
     def _get_html(self, email_message):
-        alternatives, html = getattr(email_message, 'alternatives', None), None
+        html = None
+        alternatives = getattr(email_message, 'alternatives', None)
         if alternatives:
             try:
                 html, __ = alternatives[0]
