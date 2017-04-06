@@ -9,7 +9,7 @@ setup(name='smtp2go-django',
       license='MIT',
       packages=['smtp2go_django'],
       install_requires=[
-          'smtp2go>=2.0.0'
+          'smtp2go==2.0.0'
       ],
       classifiers=[
           "Development Status :: 5 - Production/Stable",
