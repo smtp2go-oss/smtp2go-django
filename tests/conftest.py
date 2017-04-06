@@ -32,7 +32,7 @@ def test_message(autouse=True):
     )
 
 @pytest.fixture()
-def test_html_message(autouse=True):
+def test_multipart_message(autouse=True):
     payload = {
         'to': ['matt@example.com'],
         'from_email': 'dave@example.com',

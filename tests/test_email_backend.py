@@ -11,7 +11,6 @@ from smtp2go_django.email_backend import (
 
 # Parameters accepted by smtp2go client:
 CLIENT_PARAMETERS = ['sender', 'recipients', 'subject', 'text', 'html']
-DJANGO_MESSAGE_PARAMETERS = ['from_email', 'to', 'subject', 'body']
 
 
 class TestEmailBackend:
@@ -78,10 +77,34 @@ class TestEmailBackend:
         setattr(email_backend, '_smtp2go_send', exception_raiser(exception))
         email_backend.send_messages([test_message])
 
+
+class TestHelperFunctions:
+
     @pytest.mark.parametrize('argument', CLIENT_PARAMETERS)
-    def test_parameters_passed_to_smtp2go_client(self, argument, test_html_message):
+    def test_get_payload_extracts_values_from_email_message(
+            self, argument, email_backend, test_message):
+        payload = email_backend._get_payload(test_message)
+        assert argument in payload.keys()
+
+    @pytest.mark.parametrize('argument', CLIENT_PARAMETERS)
+    def test_get_payload_extracts_values_from_multipart_message(
+            self, argument, email_backend, test_multipart_message):
+        payload = email_backend._get_payload(test_multipart_message)
+        assert argument in payload.keys()
+
+    def test_get_html_returns_html(self, email_backend, test_multipart_message):
+        expected, __ = test_multipart_message.alternatives[0]
+        assert expected == email_backend._get_html(test_multipart_message)
+
+    def test_get_html_returns_none_when_passed_text_email(
+            self, email_backend, test_message):
+        assert email_backend._get_html(test_message) == None
+
+    @pytest.mark.parametrize('argument', CLIENT_PARAMETERS)
+    def test_parameters_passed_to_smtp2go_client_from_email_message(
+            self, argument, test_message):
         email_backend = Smtp2goEmailBackend()
-        payload = email_backend._get_payload(test_html_message)
+        payload = email_backend._get_payload(test_message)
         initial_value = payload.get(argument)
 
         class MockSmtp2goClient:
@@ -91,15 +114,20 @@ class TestEmailBackend:
                 assert kwargs.get(argument) == initial_value
 
         setattr(email_backend, 'smtp2go', MockSmtp2goClient())
-        email_backend.send_messages([test_html_message])
+        email_backend.send_messages([test_message])
 
-
-class TestHelperFunctions:
     @pytest.mark.parametrize('argument', CLIENT_PARAMETERS)
-    def test__get_payload_extracts_correct_arguments(
-            self, argument, email_backend, test_message):
-        payload = email_backend._get_payload(test_message)
-        assert argument in payload.keys()
+    def test_parameters_passed_to_smtp2go_client_from_multipart_message(
+            self, argument, test_multipart_message):
+        email_backend = Smtp2goEmailBackend()
+        payload = email_backend._get_payload(test_multipart_message)
+        initial_value = payload.get(argument)
 
-    def test__get_html(self):
-        pass
+        class MockSmtp2goClient:
+            def send(self, *args, **kwargs):
+                # Check values are passed correctly:
+                assert argument in kwargs.keys()
+                assert kwargs.get(argument) == initial_value
+
+        setattr(email_backend, 'smtp2go', MockSmtp2goClient())
+        email_backend.send_messages([test_multipart_message])
