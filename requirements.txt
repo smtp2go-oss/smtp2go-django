@@ -1,4 +1,4 @@
-Django==1.11.15
+django>=1.11.19
 coverage==4.4.1
 pytest==3.2.0
 pytest-cov==2.5.1
